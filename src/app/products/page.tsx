@@ -28,7 +28,6 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Загрузка списка товаров
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -41,7 +40,7 @@ export default function ProductsPage() {
         } else if (data.products) {
           setProducts(data.products);
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load products');
       } finally {
         setLoading(false);
@@ -50,7 +49,6 @@ export default function ProductsPage() {
     if (query) fetchProducts();
   }, [query]);
 
-  // Загрузка деталей продукта
   useEffect(() => {
     const fetchProductDetails = async () => {
       if (!selectedProduct?.productId) return;
@@ -79,10 +77,9 @@ export default function ProductsPage() {
     <div className='min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 p-6'>
       <div className='max-w-7xl mx-auto'>
         <h1 className='text-4xl font-extrabold text-gray-800 mb-6 text-center'>
-          Search Results for "{query}"
+          Search Results for &quot;{query}&quot;
         </h1>
 
-        {/* Поиск */}
         <div className='mb-8 flex justify-center'>
           <input
             type='text'
@@ -93,7 +90,6 @@ export default function ProductsPage() {
           />
         </div>
 
-        {/* Состояния загрузки и ошибки */}
         {loading ? (
           <p className='text-center text-gray-600'>Loading...</p>
         ) : error ? (
@@ -125,7 +121,6 @@ export default function ProductsPage() {
           </div>
         )}
 
-        {/* Модальное окно */}
         {selectedProduct && (
           <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
             <div className='bg-white rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl'>
@@ -155,30 +150,26 @@ export default function ProductsPage() {
               {selectedProduct.details && (
                 <p className='text-gray-600 mb-2'>Details: {selectedProduct.details}</p>
               )}
-              {selectedProduct.extensions &&
-                Array.isArray(selectedProduct.extensions) &&
-                selectedProduct.extensions.length > 0 && (
-                  <div className='mb-4'>
-                    <h3 className='text-lg font-semibold text-gray-800'>Features:</h3>
-                    <ul className='list-disc pl-5 text-gray-600'>
-                      {selectedProduct.extensions.map((ext, index) => (
-                        <li key={index}>{ext}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              {selectedProduct.specifications &&
-                Array.isArray(selectedProduct.specifications) &&
-                selectedProduct.specifications.length > 0 && (
-                  <div className='mb-4'>
-                    <h3 className='text-lg font-semibold text-gray-800'>Specifications:</h3>
-                    {selectedProduct.specifications.map((spec, index) => (
-                      <p key={index} className='text-gray-600'>
-                        <span className='font-medium'>{spec.key}:</span> {spec.value}
-                      </p>
+              {selectedProduct.extensions && selectedProduct.extensions.length > 0 && (
+                <div className='mb-4'>
+                  <h3 className='text-lg font-semibold text-gray-800'>Features:</h3>
+                  <ul className='list-disc pl-5 text-gray-600'>
+                    {selectedProduct.extensions.map((ext, index) => (
+                      <li key={index}>{ext}</li>
                     ))}
-                  </div>
-                )}
+                  </ul>
+                </div>
+              )}
+              {selectedProduct.specifications && selectedProduct.specifications.length > 0 && (
+                <div className='mb-4'>
+                  <h3 className='text-lg font-semibold text-gray-800'>Specifications:</h3>
+                  {selectedProduct.specifications.map((spec, index) => (
+                    <p key={index} className='text-gray-600'>
+                      <span className='font-medium'>{spec.key}:</span> {spec.value}
+                    </p>
+                  ))}
+                </div>
+              )}
               <div className='flex justify-between'>
                 <button
                   onClick={() => setSelectedProduct(null)}

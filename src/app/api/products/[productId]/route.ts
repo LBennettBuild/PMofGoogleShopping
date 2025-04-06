@@ -1,14 +1,45 @@
 import { NextResponse } from 'next/server';
 
-// Определяем тип для параметров маршрута
-interface Params {
-  productId: string;
+interface ProductSeller {
+  merchant?: string;
+  item_price?: { value: number };
+  shipping_price?: { value: number };
+  total_price?: { value: number };
+  details?: string;
+  url?: string;
 }
 
-export async function GET(request: Request, { params }: { params: Params }) {
+interface ProductResponse {
+  product_id?: string;
+  title?: string;
+  price?: string;
+  source?: string;
+  image?: string;
+  description?: string;
+  extensions?: string[];
+  specifications?: { key: string; value: string }[];
+  sellers?: ProductSeller[];
+  url?: string;
+}
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  seller: string;
+  image: string;
+  shipping: number;
+  totalPrice: number;
+  details: string;
+  url: string;
+  description: string;
+  extensions: string[];
+  specifications: { key: string; value: string }[];
+}
+
+export async function GET(request: Request, { params }: { params: { productId: string } }) {
   const { productId } = params;
 
-  // Проверка наличия productId
   if (!productId) {
     return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
   }
@@ -27,7 +58,7 @@ export async function GET(request: Request, { params }: { params: Params }) {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
-    const data = await response.json();
+    const data = (await response.json()) as ProductResponse;
 
     if (!response.ok) {
       return NextResponse.json(
@@ -36,7 +67,7 @@ export async function GET(request: Request, { params }: { params: Params }) {
       );
     }
 
-    const product = {
+    const product: Product = {
       id: data.product_id || productId,
       name: data.title || 'Unknown',
       price:
