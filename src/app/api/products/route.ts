@@ -1,15 +1,5 @@
 import { NextResponse } from 'next/server';
 
-interface ShoppingResult {
-  product_id?: string;
-  position: number;
-  title: string;
-  price?: string;
-  source?: string;
-  thumbnail?: string;
-  image?: string;
-}
-
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('query') || '';
@@ -41,14 +31,14 @@ export async function GET(request: Request) {
       );
     }
 
-    const shoppingResults = (data.shopping_results || []) as ShoppingResult[];
-    const products = shoppingResults.map((item) => ({
-      id: item.product_id || item.position.toString(),
+    const shoppingResults = data.shopping_results || [];
+    const products = shoppingResults.map((item: any) => ({
+      id: item.product_id || item.position,
       name: item.title,
       price: parseFloat(item.price?.replace(/[^0-9.]/g, '') || '0'),
       seller: item.source || 'Unknown',
       image: item.thumbnail || item.image || 'https://via.placeholder.com/150',
-      productId: item.product_id,
+      productId: item.product_id, // Для дальнейшего запроса деталей
     }));
 
     return NextResponse.json({ products });
